@@ -3,6 +3,8 @@ Paper Drive
 
 A collection and filtering system for scientific papers and journal articles.
 
+![Collection screenshot, sorted by number of citations](http://picload.org/image/calgpgd/paper-drive-sc.png)
+
 PDF files with a given name pattern are transformed to a searchable table of documents.<br/>
 
 Sample directory structure:
