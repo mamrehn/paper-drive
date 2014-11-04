@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Con Checker!</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="page">
+    <h1>Papers in collection</h1>
+    <table>
+        <thead>
+        <tr>
+            <td>title</td>
+            <td>year</td>
+            <td>citations</td>
+            <td>publisher</td>
+            <td>type</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for dat in data %}
+            <tr>
+                <td><a href="file:///{{ dat.full_path}}">{{ dat.title | safe}}</a></td>
+                {% if dat.year %}
+                    <td>{{ dat.year | safe }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+                {% if dat.citations %}
+                    <td>{{ dat.citations | safe }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+                {% if dat.publisher %}
+                    <td>{{ dat.publisher | safe }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+                {% if dat.type %}
+                    <td>{{ dat.type | safe }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+                <!--{ % if person.year % }
+                    <td class="klout">{ { person.klout.score| round(precision=2) } }</td>
+                    <td class="klout">{ { person.klout.scoreDelta.monthChange| round(precision=2) } }</td>
+                { % else % }
+                    <td class="klout">n/a</td>
+                    <td class="klout">n/a</td>
+                { % endif % }-->
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
