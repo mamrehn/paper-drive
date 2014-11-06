@@ -1,7 +1,12 @@
+/* http://wdn.unl.edu/resources/colors */
+.myGridLayout {
+    background: #FEFDFA;
+}
 .myGrid {
     /*width: 900px;*/
     height: 912px;
 }
+
 /* http://jsfiddle.net/AhakQ/7/ */
 .rating {
     color: #a9a9a9;
@@ -20,5 +25,5 @@ ul.rating {
     cursor: pointer;
 }
 .rating .filled {
-    color: red;
+    color: #D00000;
 }

@@ -17,12 +17,12 @@
     <title>Paper collection</title>
 </head>
 <body>
-<div ng-controller="MainCtrl">
+<div ng-controller="MainCtrl" class="myGridLayout">
     <!--You can use asterisks to fuzz-match, i.e. use "*z*" as your filter to show any row where that column contains a "z".
     <br/>
     <br/>
     <br/>-->
-    <div id="grid1" ui-grid="gridOptions" class="myGrid"></div>
+    <div id="grid1" ui-grid="gridOptions" external-scopes="myNewModel" class="myGrid"></div>
 </div>
 </body>
 </html>

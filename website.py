@@ -29,10 +29,10 @@ class DataHandler:
     def __path2url(self, path):
         #from urllib.parse import urlparse
         from urllib.request import pathname2url
-        return 'file:///' + pathname2url(path)
+        return 'file:///' + pathname2url(path.replace('\\','/'))
 
-    def get_data_with_links(self):
-        return self.data_with_links
+    # def get_data_with_links(self):
+    #     return self.data_with_links
 
     def __init__(self):
         import os
@@ -41,7 +41,7 @@ class DataHandler:
         self.base = cfg['base_dir']
         self.MAX_RATING = cfg['max_rating']
         self.data = []
-        self.data_with_links = []
+        # self.data_with_links = []
         for root, dirs, files in os.walk(self.base):
             for file in files:
                 if file.endswith(".pdf") or file.endswith(".PDF"):
@@ -49,8 +49,8 @@ class DataHandler:
                     file_info = self.__get_file_info(relative_root, file, self.MAX_RATING)
                     self.data.append(
                         {
-                            'full_path': os.path.join(root, file),
-                            'path': os.path.join(relative_root, file),
+                            #'full_path': os.path.join(root, file),
+                            'path': os.path.join(relative_root, file).replace('\\','/'),
                             'type': 'pdf',
                             'rating': file_info['rating'],
                             'year': file_info['year'],
@@ -70,12 +70,13 @@ class DataHandler:
         # data with links
         #if self.data_with_links:
         #    return self.data_with_links
-        self.data_with_links = self.data.copy()
-        for i in range(0, len(self.data_with_links)):
-            self.data_with_links[i]['full_path_link'] = '<a href="{}">{}</a>'.format(
-                self.__path2url(self.data_with_links[i]['full_path']),
-                self.data_with_links[i]['title']
-            )
+
+        # self.data_with_links = self.data.copy()
+        # for i in range(0, len(self.data_with_links)):
+        #     self.data_with_links[i]['full_path_link'] = '<a href="{}">{}</a>'.format(
+        #         self.__path2url(self.data_with_links[i]['full_path']),
+        #         self.data_with_links[i]['title']
+        #     )
 
     def __get_file_info(self, dirs, file, max_rating=4):
         import platform

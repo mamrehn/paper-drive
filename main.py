@@ -20,6 +20,34 @@ def static_proxy_css(path):
     # send_static_file will guess the correct MIME type
     return app.send_static_file(os.path.join('css/', path)) #.replace('\\','/'))
 
+@app.route('/data/papers/<path:path>')
+def display_paper(path):
+    import re
+    regex = re.compile('[/\\\\]\\.\\.')
+    m = regex.search(path)
+    if m:
+        return FileNotFoundError
+    from config import get_config
+    if path.endswith('.pdf') or path.endswith('.PDF'):
+        import platform
+        full_path = get_config()['base_dir'] + path #os.path.join(get_config()['base_dir'], path)
+        if 'Windows' == platform.system():
+            full_path = full_path.replace('/', '\\')
+        pdf_fp = open(full_path, "rb")
+        binary_pdf = pdf_fp.read()
+
+        # http://stackoverflow.com/questions/18281433/flask-handling-a-pdf-as-its-own-page
+        from flask import make_response
+        response = make_response(binary_pdf)
+        pdf_fp.close()
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = \
+            'inline; filename={}'.format(path.split('/')[-1])
+        return response
+        #return app.send_static_file(full_path)
+    else:
+        return PermissionError
+
 @app.route('/data/papers.json')
 def display_data():
     data = {}
@@ -34,12 +62,12 @@ def display_data():
             json_data_fp.close()
         else:
             from json import dump
-            data = webs.json_data_with_links()
+            data = webs.json_data()
             static_json_db_fp = open(my_path, 'w')
             dump(data, static_json_db_fp, sort_keys=True, indent=2)
             static_json_db_fp.close()
     else:
-        data = webs.json_data_with_links()
+        data = webs.json_data()
     from json import dumps
     return dumps(data, sort_keys=True, indent=2)
 

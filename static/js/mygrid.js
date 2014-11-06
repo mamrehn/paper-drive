@@ -9,7 +9,11 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
     //var linkCellTemplate2 = '<div class="ngCellText" ng-class="col.colIndex()">' +
     //                   "  {{grid.getCellValue(row, col)}}" + '</div>';
 
-    var linkCellTemplate3 = '<a href="file:///{{grid.getCellValue(row, col)}}"><button id="editBtn" type="button" class="btn-small" >link</button></a>'
+    var titleCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
+        '<a ng-click="getExternalScopes().goToFile(row.entity)">{{grid.getCellValue(row, col)}}</a>' +
+        '</div>';
+
+    var linkCellTemplate = '<a href="file:///{{grid.getCellValue(row, col)}}"><button id="editBtn" type="button" class="btn-small" >link</button></a>'
     // getExternalScopes().edit(row.entity)
 
     // http://stackoverflow.com/questions/23646395/rendering-a-star-rating-system-using-angularjs
@@ -17,9 +21,14 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
         '<div star-rating rating-value="grid.getCellValue(row, col)" max="4" ></div>' +
         '</div>';
 
-//    $scope.edit = function(a){
-//        alert(JSON.stringify(a));
-//    }
+    // Access outside scope functions from row template
+    $scope.myNewModel = {
+        goToFile: function(row) {
+            //alert(JSON.stringify(row));
+            console.log(row);
+            window.open('/data/papers/' + row['path']);
+        }
+    };
 
 //    // http://stackoverflow.com/questions/16824853/way-to-ng-repeat-defined-number-of-times-instead-of-repeating-over-array
 //    $scope.getNumber = function(num) {
@@ -54,7 +63,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
                 field: 'title',
                 enableCellEdit: false,
                 aggregationType: uiGridConstants.aggregationTypes.count,
-                //cellTemplate: linkCellTemplate,
+                cellTemplate: titleCellTemplate,
                 filters: [
                     {
                     condition: uiGridConstants.filter.CONTAINS,
@@ -107,21 +116,21 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
                     condition: uiGridConstants.filter.CONTAINS,
                     placeholder: 'contains'
                 }
-            },
-            {
-                field: 'full_path',
-                displayName: 'Link',
-                //aggregationType: uiGridConstants.aggregationTypes.count,
-                //aggregationHideLabel: true,
-                enableCellEdit: false,
-                //visible: false,
-                cellTemplate: linkCellTemplate3,
-                //filter: {
-                //    condition: uiGridConstants.filter.STARTS_WITH,
-                //    placeholder: 'starts with'
-                //},
-                width: 70
-            }
+            }//,
+//            {
+//                field: 'full_path',
+//                displayName: 'Link',
+//                //aggregationType: uiGridConstants.aggregationTypes.count,
+//                //aggregationHideLabel: true,
+//                enableCellEdit: false,
+//                //visible: false,
+//                cellTemplate: linkCellTemplate,
+//                //filter: {
+//                //    condition: uiGridConstants.filter.STARTS_WITH,
+//                //    placeholder: 'starts with'
+//                //},
+//                width: 70
+//            }
         ]
     };
 
