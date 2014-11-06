@@ -3,22 +3,58 @@ var app = angular.module('app', ['ngAnimate', 'ui.grid', 'ui.grid.autoResize', '
 app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($scope, $http, uiGridConstants) {
 
     // http://stackoverflow.com/questions/18310007/add-html-link-in-anyone-of-ng-grid
-    var linkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
-                       '  <a href="file:///{{row.getProperty(col.field)}}">Visible text</a>' +
-                       '</div>';
-    var linkCellTemplate2 = '<div class="ngCellText" ng-class="col.colIndex()">' +
-                       "  {{row.getProperty(col.field)}}" + '</div>';
+    //var linkCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
+    //                   '  <a href="file:///{{grid.getCellValue(row, col["full_path"])}}">{{grid.getCellValue(row, col)}}</a>' +
+    //                   '</div>';
+    //var linkCellTemplate2 = '<div class="ngCellText" ng-class="col.colIndex()">' +
+    //                   "  {{grid.getCellValue(row, col)}}" + '</div>';
+
+    var linkCellTemplate3 = '<a href="file:///{{grid.getCellValue(row, col)}}"><button id="editBtn" type="button" class="btn-small" >link</button></a>'
+    // getExternalScopes().edit(row.entity)
+
+    // http://stackoverflow.com/questions/23646395/rendering-a-star-rating-system-using-angularjs
+    var ratingCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
+        '<div star-rating rating-value="grid.getCellValue(row, col)" max="4" ></div>' +
+        '</div>';
+
+//    $scope.edit = function(a){
+//        alert(JSON.stringify(a));
+//    }
+
+//    // http://stackoverflow.com/questions/16824853/way-to-ng-repeat-defined-number-of-times-instead-of-repeating-over-array
+//    $scope.getNumber = function(num) {
+//        return new Array(num);
+//    }
 
     $scope.gridOptions = {
+        enableHorizontalScrollbar: uiGridConstants.scrollbars.NEVER,
         enableFiltering: true,
         showFooter: true,
         //showGroupPanel: true,
         columnDefs: [
-            // default
+            {
+              field: 'rating',
+              enableCellEdit: false,
+              aggregationType: uiGridConstants.aggregationTypes.avg,
+              aggregationHideLabel: true,
+              width: 65,
+              cellTemplate: ratingCellTemplate,
+              filters: [
+                    {
+                        condition: uiGridConstants.filter.GREATER_THAN_OR_EQUAL,
+                        placeholder: 'min'
+                    },
+                    {
+                        condition: uiGridConstants.filter.LESS_THAN_OR_EQUAL,
+                        placeholder: 'max'
+                    }
+              ]
+            },
             {
                 field: 'title',
                 enableCellEdit: false,
                 aggregationType: uiGridConstants.aggregationTypes.count,
+                //cellTemplate: linkCellTemplate,
                 filters: [
                     {
                     condition: uiGridConstants.filter.CONTAINS,
@@ -34,6 +70,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
             {
                 field: 'year',
                 aggregationType: uiGridConstants.aggregationTypes.min,
+                width: 100,
                 filters: [
                     {
                         condition: uiGridConstants.filter.GREATER_THAN_OR_EQUAL,
@@ -43,15 +80,14 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
                         condition: uiGridConstants.filter.LESS_THAN_OR_EQUAL,
                         placeholder: 'max'
                     }
-                ],
-                width: 150
+                ]
             },
             // no filter input
             {
                 field: 'citations',
                 aggregationType: uiGridConstants.aggregationTypes.avg,
                 aggregationHideLabel: true,
-                width: 150,
+                width: 100,
                 filters: [
                     {
                         condition: uiGridConstants.filter.GREATER_THAN_OR_EQUAL,
@@ -66,39 +102,25 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
             {
                 field: 'publisher',
                 //aggregationType: uiGridConstants.aggregationTypes.count,
-                width: 150,
+                width: 120,
                 filter: {
                     condition: uiGridConstants.filter.CONTAINS,
                     placeholder: 'contains'
                 }
             },
             {
-                field: 'path',
-                displayName: 'Link',
-                //aggregationType: uiGridConstants.aggregationTypes.count,
-                //aggregationHideLabel: true,
-                enableCellEdit: false,
-                cellTemplate: linkCellTemplate,
-                //filter: {
-                //    condition: uiGridConstants.filter.STARTS_WITH,
-                //    placeholder: 'starts with'
-                //},
-                width: 100
-            }//,
-            // custom condition function
-            //{ field: 'type' }
-            ,{
                 field: 'full_path',
                 displayName: 'Link',
                 //aggregationType: uiGridConstants.aggregationTypes.count,
                 //aggregationHideLabel: true,
                 enableCellEdit: false,
-                cellTemplate: linkCellTemplate2,
+                //visible: false,
+                cellTemplate: linkCellTemplate3,
                 //filter: {
                 //    condition: uiGridConstants.filter.STARTS_WITH,
                 //    placeholder: 'starts with'
                 //},
-                width: 100
+                width: 70
             }
         ]
     };
@@ -113,3 +135,27 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
     //angular.element(document.getElementsByClassName('grid')[0]).css('width', newWidth + 'px');
 
 }]);
+
+
+app.directive('starRating', function () {
+    return {
+        restrict: 'A',
+        template: '<ul class="rating">' +
+            '<li ng-repeat="star in stars" ng-class="star">' +
+            '\u2605' +
+            '</li>' +
+            '</ul>',
+        scope: {
+            ratingValue: '=',
+            max: '='
+        },
+        link: function (scope, elem, attrs) {
+            scope.stars = [];
+            for (var i = 0; i < scope.max; i++) {
+                scope.stars.push({
+                    filled: i < scope.ratingValue
+                });
+            }
+        }
+    }
+});

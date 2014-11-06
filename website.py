@@ -1,5 +1,3 @@
-__author__ = 'Mario Amrehn'
-
 class Website:
 
     def __init__(self):
@@ -28,33 +26,33 @@ class DataHandler:
     def get_metadata(self):
         return self.meta_data #.copy()
 
+    def __path2url(self, path):
+        #from urllib.parse import urlparse
+        from urllib.request import pathname2url
+        return 'file:///' + pathname2url(path)
+
     def get_data_with_links(self):
-        if self.data_with_links:
-            return self.data_with_links
-        self.data_with_links = self.data.copy()
-        for i in range(0, len(self.data_with_links)):
-            self.data_with_links[i]['full_path_link'] = '<a href="file:///{}">{}</a>'.format(
-                self.data_with_links[i]['full_path'],
-                self.data_with_links[i]['title']
-            )
         return self.data_with_links
 
     def __init__(self):
         import os
         from config import get_config
-        self.base = get_config()['base_dir']
+        cfg = get_config()
+        self.base = cfg['base_dir']
+        self.MAX_RATING = cfg['max_rating']
         self.data = []
         self.data_with_links = []
         for root, dirs, files in os.walk(self.base):
             for file in files:
-                if file.endswith(".pdf"):
+                if file.endswith(".pdf") or file.endswith(".PDF"):
                     relative_root = root[len(self.base):]
-                    file_info = self.__get_file_info(relative_root, file)
+                    file_info = self.__get_file_info(relative_root, file, self.MAX_RATING)
                     self.data.append(
                         {
                             'full_path': os.path.join(root, file),
                             'path': os.path.join(relative_root, file),
                             'type': 'pdf',
+                            'rating': file_info['rating'],
                             'year': file_info['year'],
                             'publisher': file_info['publisher'],
                             'citations': file_info['citations'],
@@ -69,7 +67,17 @@ class DataHandler:
             'base': self.base
         }
 
-    def __get_file_info(self, dirs, file):
+        # data with links
+        #if self.data_with_links:
+        #    return self.data_with_links
+        self.data_with_links = self.data.copy()
+        for i in range(0, len(self.data_with_links)):
+            self.data_with_links[i]['full_path_link'] = '<a href="{}">{}</a>'.format(
+                self.__path2url(self.data_with_links[i]['full_path']),
+                self.data_with_links[i]['title']
+            )
+
+    def __get_file_info(self, dirs, file, max_rating=4):
         import platform
         sep = '\\' if 'Windows' == platform.system() else '/'
         dir_list = dirs.split(sep)
@@ -114,4 +122,16 @@ class DataHandler:
                         meta_count += 1
             if 0 < meta_count:
                 title = ' - '.join(file_tags[:-meta_count])
-        return {'year': year, 'publisher': publisher, 'citations': citations, 'title': title}
+
+            # get rating
+            rating = 0
+            regex = re.compile('^(\d{2})_')
+            m = regex.search(title)
+            if m:
+                try:
+                    rating = max_rating - int(m.group()[0:1])
+                except:
+                    pass
+                title = title[3:]
+
+        return {'year': year, 'publisher': publisher, 'citations': citations, 'title': title, 'rating': rating}

@@ -22,8 +22,27 @@ def static_proxy_css(path):
 
 @app.route('/data/papers.json')
 def display_data():
+    data = {}
+    from config import get_config
+    cfg = get_config()
+    if cfg['_save_data_as_static_json']['is_active']: # debug
+        my_path = cfg['_save_data_as_static_json']['path']
+        if not cfg['debug'] and os.path.isfile(my_path):
+            from json import load
+            json_data_fp = open(my_path, 'r')
+            data = load(json_data_fp)
+            json_data_fp.close()
+        else:
+            from json import dump
+            data = webs.json_data_with_links()
+            static_json_db_fp = open(my_path, 'w')
+            dump(data, static_json_db_fp, sort_keys=True, indent=2)
+            static_json_db_fp.close()
+    else:
+        data = webs.json_data_with_links()
     from json import dumps
-    return dumps(webs.json_data_with_links())
+    return dumps(data, sort_keys=True, indent=2)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
