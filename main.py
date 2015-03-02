@@ -20,6 +20,11 @@ def static_proxy_css(path):
     # send_static_file will guess the correct MIME type
     return app.send_static_file(os.path.join('css/', path)) #.replace('\\','/'))
 
+@app.route('/resource/<path:path>')
+def static_proxy_resource(path):
+    # send_static_file will guess the correct MIME type
+    return app.send_static_file(os.path.join('resource/', path)) #.replace('\\','/'))
+
 @app.route('/data/papers/<path:path>')
 def display_paper(path):
     import re
@@ -47,6 +52,30 @@ def display_paper(path):
         #return app.send_static_file(full_path)
     else:
         return PermissionError
+
+
+# def __dl_and_concat(file_list):
+#     import urllib
+#     res = ''
+#     for f in file_list:
+#         if 'http' == f[:4]:
+#             res += urllib.request.urlopen(f).read().decode('utf-8')
+#         else:
+#             fd = open(f, 'r')
+#             res += fd.read()
+#             fd.close()
+#     return res
+
+# @app.route('/static/resources/script.js')
+# def display_javascript():
+#     from config import get_config
+#     cfg = get_config()
+#     if not cfg['resource_download_and_bundle']['is_active']:
+#         raise FileNotFoundError
+#         return None
+#     js_string = __dl_and_concat(cfg['resource_download_and_bundle']['js'])
+#     #css_string = __dl_and_concat(cfg['resource_download_and_bundle']['css'])
+#     return js_string
 
 @app.route('/data/papers.json')
 def display_data():

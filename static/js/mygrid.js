@@ -9,12 +9,13 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
     //var linkCellTemplate2 = '<div class="ngCellText" ng-class="col.colIndex()">' +
     //                   "  {{grid.getCellValue(row, col)}}" + '</div>';
 
-    var titleCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
-        '<a ng-click="getExternalScopes().goToFile(row.entity)">{{grid.getCellValue(row, col)}}</a>' +
+    // http://ui-grid.info/docs/#/tutorial/305_appScope
+    var titleCellTemplate = '<div class="ngCellText ui-grid-cell-contents" ng-class="col.colIndex()">' +
+        '<a ng-click="grid.appScope.myNewModel.goToFile(row.entity)">{{grid.getCellValue(row, col)}}</a>' +
         '</div>';
 
-    var linkCellTemplate = '<a href="file:///{{grid.getCellValue(row, col)}}"><button id="editBtn" type="button" class="btn-small" >link</button></a>'
-    // getExternalScopes().edit(row.entity)
+    // var linkCellTemplate = '<a href="file:///{{grid.getCellValue(row, col)}}"><button id="editBtn" type="button" class="btn-small" >link</button></a>'
+    // grid.appScope.edit(row.entity)
 
     // http://stackoverflow.com/questions/23646395/rendering-a-star-rating-system-using-angularjs
     var ratingCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
@@ -25,7 +26,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
     $scope.myNewModel = {
         goToFile: function(row) {
             //alert(JSON.stringify(row));
-            console.log(row);
+            //console.log(row);
             window.open('/data/papers/' + row['path']);
         }
     };
@@ -46,7 +47,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
               enableCellEdit: false,
               aggregationType: uiGridConstants.aggregationTypes.avg,
               aggregationHideLabel: true,
-              width: 65,
+              width: 68,
               cellTemplate: ratingCellTemplate,
               filters: [
                     {
@@ -79,7 +80,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
             {
                 field: 'year',
                 aggregationType: uiGridConstants.aggregationTypes.min,
-                width: 100,
+                width: 75,
                 filters: [
                     {
                         condition: uiGridConstants.filter.GREATER_THAN_OR_EQUAL,
@@ -96,7 +97,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
                 field: 'citations',
                 aggregationType: uiGridConstants.aggregationTypes.avg,
                 aggregationHideLabel: true,
-                width: 100,
+                width: 75,
                 filters: [
                     {
                         condition: uiGridConstants.filter.GREATER_THAN_OR_EQUAL,
@@ -111,7 +112,16 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
             {
                 field: 'publisher',
                 //aggregationType: uiGridConstants.aggregationTypes.count,
-                width: 120,
+                width: 100,
+                filter: {
+                    condition: uiGridConstants.filter.CONTAINS,
+                    placeholder: 'contains'
+                }
+            },
+            {
+                field: 'author',
+                //aggregationType: uiGridConstants.aggregationTypes.count,
+                width: 100,
                 filter: {
                     condition: uiGridConstants.filter.CONTAINS,
                     placeholder: 'contains'
@@ -166,5 +176,5 @@ app.directive('starRating', function () {
                 });
             }
         }
-    }
+    };
 });

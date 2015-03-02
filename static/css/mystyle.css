@@ -27,3 +27,11 @@ ul.rating {
 .rating .filled {
     color: #D00000;
 }
+/* Needed to display (local) fonts defined in http://ui-grid.info/release/ui-grid-unstable.css */
+@font-face {
+  font-family: 'ui-grid';
+  src: url('../resource/ui-grid.eot');
+  src: url('../resource/ui-grid.eot#iefix') format('embedded-opentype'), url('../resource/ui-grid.woff') format('woff'), url('../resource/ui-grid.ttf?') format('truetype'), url('../resource/ui-grid.svg?#ui-grid') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
