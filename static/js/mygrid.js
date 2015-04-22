@@ -14,12 +14,16 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
         '<a ng-click="grid.appScope.myNewModel.goToFile(row.entity)">{{grid.getCellValue(row, col)}}</a>' +
         '</div>';
 
+    var citationCellTemplate = '<div class="ngCellText ui-grid-cell-contents" ng-class="col.colIndex()">' +
+        '<a ng-click="grid.appScope.myNewModel.searchTitle(row.entity)">{{grid.getCellValue(row, col)}}</a>' +
+        '</div>';
+
     // var linkCellTemplate = '<a href="file:///{{grid.getCellValue(row, col)}}"><button id="editBtn" type="button" class="btn-small" >link</button></a>'
     // grid.appScope.edit(row.entity)
 
     // http://stackoverflow.com/questions/23646395/rendering-a-star-rating-system-using-angularjs
     var ratingCellTemplate = '<div class="ngCellText" ng-class="col.colIndex()">' +
-        '<div star-rating rating-value="grid.getCellValue(row, col)" max="4" ></div>' +
+        '<div star-rating rating-value="{{grid.getCellValue(row, col)}}" max="4" ></div>' +
         '</div>';
 
     // Access outside scope functions from row template
@@ -28,6 +32,9 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
             //alert(JSON.stringify(row));
             //console.log(row);
             window.open('/data/papers/' + row['path']);
+        },
+        searchTitle: function(row) {
+            window.open('http://scholar.google.com/scholar?q=' + encodeURI(row['title']));
         }
     };
 
@@ -98,6 +105,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
                 aggregationType: uiGridConstants.aggregationTypes.avg,
                 aggregationHideLabel: true,
                 width: 75,
+                cellTemplate: citationCellTemplate,
                 filters: [
                     {
                         condition: uiGridConstants.filter.GREATER_THAN_OR_EQUAL,
@@ -165,8 +173,8 @@ app.directive('starRating', function () {
             '</li>' +
             '</ul>',
         scope: {
-            ratingValue: '=',
-            max: '='
+            ratingValue: '@',
+            max: '@'
         },
         link: function (scope, elem, attrs) {
             scope.stars = [];
