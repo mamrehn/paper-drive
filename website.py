@@ -100,7 +100,7 @@ class DataHandler:
 
             import re
             regex_year      = re.compile('^(19|20)\d{2}$')
-            regex_author    = re.compile('^\([a-zA-Z]+ ?[a-zA-Z]+\)$')
+            regex_author    = re.compile('^\([a-zA-Z\-]+ ?[a-zA-Z\-]+\)$')
             regex_citations = re.compile('^([0-9])+c\s*\[?[^]]*\]?$')
             regex_publisher = re.compile('^[a-zA-Z3]+ ?[a-zA-Z3]+$')
             regex_rating    = re.compile('^(\d{2})_')
@@ -133,7 +133,7 @@ class DataHandler:
                         citations = t
                         meta_count += 1
                         continue
-                if not publisher:
+                if not publisher and year:
                     m = regex_publisher.search(tag)
                     if m:
                         publisher = m.group(0)
