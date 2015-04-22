@@ -21,10 +21,10 @@ class Website:
 class DataHandler:
 
     def get_data(self):
-        return self.data # .copy()
+        return self.data  # .copy()
 
     def get_metadata(self):
-        return self.meta_data # .copy()
+        return self.meta_data  # .copy()
 
     def __path2url(self, path):
         # from urllib.parse import urlparse
