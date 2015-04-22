@@ -13,29 +13,31 @@ import os
 @app.route('/js/<path:path>')
 def static_proxy_js(path):
     # send_static_file will guess the correct MIME type
-    return app.send_static_file(os.path.join('js/', path)) #.replace('\\','/'))
+    return app.send_static_file(os.path.join('js/', path))  # .replace('\\','/'))
 
 @app.route('/css/<path:path>')
 def static_proxy_css(path):
     # send_static_file will guess the correct MIME type
-    return app.send_static_file(os.path.join('css/', path)) #.replace('\\','/'))
+    return app.send_static_file(os.path.join('css/', path))  # .replace('\\','/'))
 
 @app.route('/resource/<path:path>')
 def static_proxy_resource(path):
     # send_static_file will guess the correct MIME type
-    return app.send_static_file(os.path.join('resource/', path)) #.replace('\\','/'))
+    return app.send_static_file(os.path.join('resource/', path))  # .replace('\\','/'))
 
 @app.route('/data/papers/<path:path>')
 def display_paper(path):
+    # check if path contains any 'C:\\' or '/../'
     import re
     regex = re.compile('[/\\\\]\\.\\.')
     m = regex.search(path)
     if m:
         return FileNotFoundError
+    # end check
     from config import get_config
     if path.endswith('.pdf') or path.endswith('.PDF'):
         import platform
-        full_path = get_config()['base_dir'] + path #os.path.join(get_config()['base_dir'], path)
+        full_path = get_config()['base_dir'] + path  # os.path.join(get_config()['base_dir'], path)
         if 'Windows' == platform.system():
             full_path = full_path.replace('/', '\\')
         pdf_fp = open(full_path, "rb")
@@ -49,7 +51,7 @@ def display_paper(path):
         response.headers['Content-Disposition'] = \
             'inline; filename={}'.format(path.split('/')[-1])
         return response
-        #return app.send_static_file(full_path)
+        # return app.send_static_file(full_path)
     else:
         return PermissionError
 
@@ -82,7 +84,7 @@ def display_data():
     data = {}
     from config import get_config
     cfg = get_config()
-    if cfg['_save_data_as_static_json']['is_active']: # debug
+    if cfg['_save_data_as_static_json']['is_active']:  # debug
         my_path = cfg['_save_data_as_static_json']['path']
         if not cfg['debug'] and os.path.isfile(my_path):
             from json import load
