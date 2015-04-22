@@ -51,6 +51,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
         columnDefs: [
             {
               field: 'rating',
+              type: 'number',
               enableCellEdit: false,
               aggregationType: uiGridConstants.aggregationTypes.avg,
               aggregationHideLabel: true,
@@ -86,6 +87,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
             // pre-populated search field
             {
                 field: 'year',
+                type: 'number',
                 aggregationType: uiGridConstants.aggregationTypes.min,
                 width: 75,
                 filters: [
@@ -102,6 +104,7 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
             // no filter input
             {
                 field: 'citations',
+                type: 'number',
                 aggregationType: uiGridConstants.aggregationTypes.avg,
                 aggregationHideLabel: true,
                 width: 75,
@@ -129,7 +132,8 @@ app.controller('MainCtrl', ['$scope', '$http', 'uiGridConstants', function ($sco
             {
                 field: 'author',
                 //aggregationType: uiGridConstants.aggregationTypes.count,
-                width: 100,
+                minWidth: 100,
+                maxWidth: 120,
                 filter: {
                     condition: uiGridConstants.filter.CONTAINS,
                     placeholder: 'contains'
